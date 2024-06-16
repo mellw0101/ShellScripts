@@ -1,0 +1,20 @@
+#!/bin/bash
+
+git clone https://github.com/llvm/llvm-project.git
+cd llvm-project
+
+mkdir build
+
+cmake -G Ninja -S runtimes -B build \
+    -DLLVM_ENABLE_PROJECTS="libcxx;libcxxabi" \
+    -DLLVM_ENABLE_RUNTIMES="libcxx;libcxxabi" \
+    -DLIBCXX_ENABLE_STATIC=ON \
+    -DLIBCXX_ENABLE_SHARED=OFF \
+    -DLIBCXXABI_ENABLE_STATIC=ON \
+    -DLIBCXXABI_ENABLE_SHARED=OFF
+
+## build
+ninja -C build cxx cxxabi
+
+## install
+sudo ninja -C build install-cxx install-cxxabi
