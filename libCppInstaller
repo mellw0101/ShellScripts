@@ -1,7 +1,25 @@
 #!/bin/bash
 
-git clone https://github.com/llvm/llvm-project.git
-cd llvm-project
+# Initialize a new Git repository
+#git init llvm-project
+#cd llvm-project
+
+## Add the remote repository
+#git remote add origin https://github.com/llvm/llvm-project.git
+
+## Configure sparse-checkout
+#git config core.sparseCheckout true
+
+## Define the directories to checkout
+#echo "libcxx/*" >> .git/info/sparse-checkout
+#echo "libcxxabi/*" >> .git/info/sparse-checkout
+#echo "libunwind/*" >> .git/info/sparse-checkout
+
+## Fetch and checkout the desired directories
+#git pull origin main
+
+#git clone https://github.com/llvm/llvm-project.git
+#cd llvm-project
 
 mkdir build
 
