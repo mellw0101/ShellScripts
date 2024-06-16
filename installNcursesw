@@ -1,0 +1,8 @@
+wget https://ftp.gnu.org/gnu/ncurses/ncurses-6.3.tar.gz
+tar -xzf ncurses-6.3.tar.gz
+cd ncurses-6.3
+
+CC=clang CXX=clang++ CFLAGS="-O3" CXXFLAGS="-O3" ./configure --prefix=/usr/local --enable-widec --enable-static --disable-shared
+
+make
+sudo make install
