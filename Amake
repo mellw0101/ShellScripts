@@ -1,9 +1,7 @@
 #!/bin/bash
-
-#!/bin/bash
-
 # Defines the project base vars
     BASE_DIR=$(pwd)                     # Get the current working directory and store it in BASE_DIR (base directory of the project)
+    PROJECT_NAME=$(basename $BASE_DIR)
     SRC_DIR=$BASE_DIR/src               # Source directory of the project (src directory stores all source files and are the only files to be modified the rest is automated)
     C_SRC_DIR=$BASE_DIR/src/c           # C source directory of the project (c directory stores all the C source files)
     CPP_SRC_DIR=$BASE_DIR/src/cpp       # C source directory of the project (c directory stores all the C source files)
@@ -11,6 +9,7 @@
     BUILD_DIR=$BASE_DIR/build           # Build directory of the project (build directory stores all the compiled files and the final executable)
     BIN_DIR=$BASE_DIR/build/bin         # Binary directory of the project (bin directory stores the executable files for the project)
     OBJ_DIR=$BASE_DIR/build/obj         # Object directory of the project (obj directory stores all the object files)
+    LIB_DIR=$BASE_DIR/build/lib         # Library directory of the project (lib directory stores all the library files)
     INCLUDE_DIR=$BASE_DIR/src/include   # Header directory of the project (header directory stores all the header files)
 #
 
@@ -192,6 +191,7 @@ Configure() {
     dirExists $BUILD_DIR        # Check if 'build'              directory exists
     dirExists $BIN_DIR          # Check if 'build/bin'          directory exists
     dirExists $OBJ_DIR          # Check if 'build/obj'          directory exists
+    dirExists $LIB_DIR          # Check if 'build/lib'          directory exists
     dirExists $INCLUDE_DIR      # Check if 'src/include'        directory exists
 
     printc "Run 'AMake <options> <-y>' '--help' For Help" Green
@@ -230,7 +230,6 @@ compileCFiles() {
 
 compileCppFiles() {
     printc "Compiling CPP Files -> Obj Files" Green
-
     for file in "$CPP_SRC_DIR"/*".cpp"
     {
         base_file_name=$(basename $file .cpp)
@@ -244,18 +243,44 @@ compileCppFiles() {
 }
 
 make_lib_a() {
-    printc "Creating static library -> $LIB_DIR/lib.a" Green
-
+    libName=$(basename $BASE_DIR)
+    printc "Creating static library -> $LIB_DIR/$libName.a" Green
     for file in "$BUILD_DIR/obj/"*".o"
     {
         base_file_name=$(basename $file .o)
         if [ -f "$file" ]; then
             check_file_size $file
-            printc "$OBJ_DIR/$base_file_name.o -> $LIB_DIR/lib.a" Blue
-            ar rcs $BUILD_DIR/lib/lib.a $file
+            printc "$OBJ_DIR/$base_file_name.o -> $LIB_DIR/$libName.a" Blue
+            ar rcs "$BUILD_DIR/lib/$libName.a" $file
         fi
     }
-    check_file_size $LIB_DIR/lib.a
+    check_file_size "$LIB_DIR/$libName.a"
+}
+
+InstallLib () {
+    libName=$(basename $BASE_DIR)
+    printc "Installing static library -> $LIB_DIR/$libName.a" Green
+    check_file_size "$LIB_DIR/$libName.a"
+    printc "$LIB_DIR/$libName.a -> /usr/lib/$libName.a" Blue
+    sudo cp "$LIB_DIR/$libName.a" "/usr/lib/$libName.a"
+    if [ -d "/usr/include/$libName" ]; then
+        printc "/usr/include/$libName -> exists" Blue
+    else
+        printc "/usr/include/$libName -> does not exist" Red
+        printc "Creating Directory -> /usr/include/$libName" Blue
+        sudo mkdir -p /usr/include/$libName
+        if [ -d "/usr/include/$libName" ]; then
+            printc "Successfully created directory -> /usr/include/$libName" Green
+        else
+            printc "Failed to create directory -> /usr/include/$libName" Red
+        fi
+    fi
+    for file in "$INCLUDE_DIR"/*; do
+        if [ -f "$file" ]; then
+            printc "$file -> /usr/include/$libName" Blue
+            sudo cp "$file" "/usr/include/$libName/"
+        fi
+    done
 }
 
 make_c_compiler() {
@@ -333,7 +358,7 @@ Install() {
     done
 
     printc "Linking Object Files -> $BIN_DIR/$exeName" Green
-    clang++ -O3 -march=native $args -o $BIN_DIR/$exeName -lSDL2
+    clang++ -O3 -march=native $args /usr/lib/Mlib.a -o $BIN_DIR/$exeName -lSDL2 -Lcurl
     check_file_size $BIN_DIR/$exeName
 }
 
@@ -405,6 +430,15 @@ promp_func() {
     esac
 }
 
+InstallBin () {
+    printc "Installing $BIN_DIR/$PROJECT_NAME -> /usr/bin/$PROJECT_NAME" Green
+    sudo cp $BIN_DIR/$PROJECT_NAME /usr/bin/$PROJECT_NAME
+}
+
+Run () {
+    printc "Running Project" Green
+    $BIN_DIR/$(basename $BASE_DIR)
+}
 
 main() {
     check_flags
@@ -419,9 +453,17 @@ main() {
             promp_func Build ;;
         --install)
             promp_func Install ;;
+        --lib)
+            promp_func make_lib_a ;;
+        --install-lib)
+            promp_func InstallLib ;;
         --clean)
             promp_func Clean ;;
-        --help)
+        --run)
+            promp_func Run ;;
+        --install-bin)
+	    promp_func InstallBin ;;
+	--help)
             Help ;;
         *)
             printc ''"$arg"' -> Unknown Command -> Run "AMake --help" For Help' Red ;;

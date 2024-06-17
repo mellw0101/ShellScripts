@@ -1,0 +1,60 @@
+#!/bin/bash
+
+printc() {
+    echo -ne "install - [ "
+    color_tty $2
+    echo -ne "$1"
+    color_tty Reset
+    echo -ne " ]\n"
+}
+
+color_tty() {
+    for color in "$@"; do
+        case $color in
+        Green)
+            echo -ne "\033[32m" ;;
+        Red)
+            echo -ne "\033[31m" ;;
+        Yellow)
+            echo -ne "\033[33m" ;;
+        Blue)
+            echo -ne "\033[34m" ;;
+        Bright_Blue)
+            echo -ne "\033[94m" ;;
+        Gray)
+            echo -ne "\033[90m" ;;
+        Reset)
+            echo -ne "\033[0m" ;;
+        *)
+            echo -ne "\033[0m" ;;
+        esac
+    done
+}
+
+Help() {
+    printc 'Usage: install [options] [command] [arguments]' Green
+    printc 'Options:' Green
+    printc '--help      Display this help message' Green
+    printc '--install   InstallShellScripts' Green
+}
+
+Install() {
+    printc 'Installing Shell Scripts' Green
+    printc 'Copying Amake -> /usr/bin/Amake'
+    sudo cp Amake /usr/bin/Amake
+    sudo chmod u+x /usr/bin/Amake
+    sudo chown $USER:wheel /usr/bin/Amake
+    printc 'Shell Scripts Installed' Green
+}
+
+ARGS=$@
+for arg in $ARGS; do
+    case $arg in
+    --install)
+        Install ;;
+    --help)
+        Help ;;
+    *)
+        Help ;;
+    esac
+done
