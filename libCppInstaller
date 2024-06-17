@@ -1,0 +1,40 @@
+#!/bin/bash
+
+# Initialize a new Git repository
+#git init llvm-project
+#cd llvm-project
+
+## Add the remote repository
+#git remote add origin https://github.com/llvm/llvm-project.git
+
+## Configure sparse-checkout
+#git config core.sparseCheckout true
+
+## Define the directories to checkout
+#echo "libcxx/*" >> .git/info/sparse-checkout
+#echo "libcxxabi/*" >> .git/info/sparse-checkout
+#echo "libunwind/*" >> .git/info/sparse-checkout
+
+## Fetch and checkout the desired directories
+#git pull origin main
+
+#git clone https://github.com/llvm/llvm-project.git
+#cd llvm-project
+
+mkdir build
+
+## configure
+cmake -G Ninja -S runtimes -B build \
+    -DLLVM_ENABLE_PROJECTS="libcxx;libcxxabi;libunwind" \
+    -DLLVM_ENABLE_RUNTIMES="libcxx;libcxxabi;libunwind" \
+    -DLIBCXX_ENABLE_STATIC=ON \
+    -DLIBCXX_ENABLE_SHARED=OFF \
+    -DLIBCXXABI_ENABLE_STATIC=ON \
+    -DLIBCXXABI_ENABLE_SHARED=OFF \
+    -DLIBCXXABI_USE_LLVM_UNWINDER=ON
+
+## build
+ninja -C build cxx cxxabi
+
+## install
+sudo ninja -C build install-cxx install-cxxabi
