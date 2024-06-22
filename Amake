@@ -249,7 +249,7 @@ compileCppFilesStdC++() {
         base_file_name=$(basename $file .cpp)
         if [ -f "$file" ]; then
             printc "$CPP_SRC_DIR/$base_file_name.cpp  ->  $OBJ_DIR/$base_file_name.o" Blue
-            clang++ -O3 -c $file -o $OBJ_DIR/$base_file_name.o
+            clang++ -O3 -stdlib=libc++ -std=c++20 -c $file -o $OBJ_DIR/$base_file_name.o
             check_file_size $CPP_SRC_DIR/$base_file_name.cpp
             check_file_size $OBJ_DIR/$base_file_name.o
         fi
