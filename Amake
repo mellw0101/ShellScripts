@@ -235,7 +235,21 @@ compileCppFiles() {
         base_file_name=$(basename $file .cpp)
         if [ -f "$file" ]; then
             printc "$CPP_SRC_DIR/$base_file_name.cpp  ->  $OBJ_DIR/$base_file_name.o" Blue
-            clang++ -O3 -march=native -c $file -o $OBJ_DIR/$base_file_name.o
+            clang++ -O3 -c $file -o $OBJ_DIR/$base_file_name.o
+            check_file_size $CPP_SRC_DIR/$base_file_name.cpp
+            check_file_size $OBJ_DIR/$base_file_name.o
+        fi
+    }
+}
+
+compileCppFilesStdC++() {
+    printc "Compiling CPP Files -> Obj Files" Green
+    for file in "$CPP_SRC_DIR"/*".cpp"
+    {
+        base_file_name=$(basename $file .cpp)
+        if [ -f "$file" ]; then
+            printc "$CPP_SRC_DIR/$base_file_name.cpp  ->  $OBJ_DIR/$base_file_name.o" Blue
+            clang++ -O3 -c $file -o $OBJ_DIR/$base_file_name.o
             check_file_size $CPP_SRC_DIR/$base_file_name.cpp
             check_file_size $OBJ_DIR/$base_file_name.o
         fi
@@ -255,6 +269,21 @@ make_lib_a() {
         fi
     }
     check_file_size "$LIB_DIR/$libName.a"
+}
+
+make_arm_lib_a() {
+    libName=$(basename $BASE_DIR)
+    printc "Creating ARM static library -> $LIB_DIR/$libName.arm.a" Green
+    for file in "$BUILD_DIR/obj/"*".arm.o"
+    {
+        base_file_name=$(basename $file .arm.o)
+        if [ -f "$file" ]; then
+            check_file_size $file
+            printc "$OBJ_DIR/$base_file_name.o -> $LIB_DIR/$libName.arm.a" Blue
+            ar rcs "$BUILD_DIR/lib/$libName.arm.a" $file
+        fi
+    }
+    check_file_size "$LIB_DIR/$libName.arm"
 }
 
 InstallLib () {
@@ -349,7 +378,8 @@ Install() {
     printc "Installing -> $exeName" Green
 
     args=""
-    for file in "$OBJ_DIR"/*".o"; do
+    for file in "$OBJ_DIR"/*".o"
+    do
         base_file_name=$(basename $file .o)
         if [ -f "$file" ]; then
             check_file_size $file
@@ -449,6 +479,8 @@ main() {
             promp_func InstallEditor ;;
         --configure)
             promp_func Configure ;;
+        --buildStdC++)
+            promp_func compileCppFilesStdC++ ;;
         --build)
             promp_func Build ;;
         --install)
