@@ -388,7 +388,7 @@ Install() {
     done
 
     printc "Linking Object Files -> $BIN_DIR/$exeName" Green
-    clang++ -O3 -march=native $args /usr/lib/Mlib.a -o $BIN_DIR/$exeName -lSDL2 -Lcurl
+    clang++ -O3 -march=native $args /usr/lib/Mlib.a -o $BIN_DIR/$exeName -Lcurl
     check_file_size $BIN_DIR/$exeName
 }
 
