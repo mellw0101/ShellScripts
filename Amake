@@ -1,16 +1,16 @@
 #!/bin/bash
 # Defines the project base vars
-    BASE_DIR=$(pwd)                     # Get the current working directory and store it in BASE_DIR (base directory of the project)
-    PROJECT_NAME=$(basename $BASE_DIR)
-    SRC_DIR=$BASE_DIR/src               # Source directory of the project (src directory stores all source files and are the only files to be modified the rest is automated)
-    C_SRC_DIR=$BASE_DIR/src/c           # C source directory of the project (c directory stores all the C source files)
-    CPP_SRC_DIR=$BASE_DIR/src/cpp       # C source directory of the project (c directory stores all the C source files)
-    AS_SRC_DIR=$BASE_DIR/src/as         # Assembly source directory of the project (as directory stores all the assembly source files)
-    BUILD_DIR=$BASE_DIR/build           # Build directory of the project (build directory stores all the compiled files and the final executable)
-    BIN_DIR=$BASE_DIR/build/bin         # Binary directory of the project (bin directory stores the executable files for the project)
-    OBJ_DIR=$BASE_DIR/build/obj         # Object directory of the project (obj directory stores all the object files)
-    LIB_DIR=$BASE_DIR/build/lib         # Library directory of the project (lib directory stores all the library files)
-    INCLUDE_DIR=$BASE_DIR/src/include   # Header directory of the project (header directory stores all the header files)
+BASE_DIR=$(pwd) # Get the current working directory and store it in BASE_DIR (base directory of the project)
+PROJECT_NAME=$(basename $BASE_DIR)
+SRC_DIR=$BASE_DIR/src             # Source directory of the project (src directory stores all source files and are the only files to be modified the rest is automated)
+C_SRC_DIR=$BASE_DIR/src/c         # C source directory of the project (c directory stores all the C source files)
+CPP_SRC_DIR=$BASE_DIR/src/cpp     # C source directory of the project (c directory stores all the C source files)
+AS_SRC_DIR=$BASE_DIR/src/as       # Assembly source directory of the project (as directory stores all the assembly source files)
+BUILD_DIR=$BASE_DIR/build         # Build directory of the project (build directory stores all the compiled files and the final executable)
+BIN_DIR=$BASE_DIR/build/bin       # Binary directory of the project (bin directory stores the executable files for the project)
+OBJ_DIR=$BASE_DIR/build/obj       # Object directory of the project (obj directory stores all the object files)
+LIB_DIR=$BASE_DIR/build/lib       # Library directory of the project (lib directory stores all the library files)
+INCLUDE_DIR=$BASE_DIR/src/include # Header directory of the project (header directory stores all the header files)
 #
 
 print() {
@@ -54,29 +54,39 @@ print_if_folder_not_empty() {
     done
 }
 
-printf () {
+printf() {
     for arg in "$@"; do
         case $arg in
         Green)
-            echo -ne "\033[32m" ;;
+            echo -ne "\033[32m"
+            ;;
         Red)
-            echo -ne "\033[31m" ;;
+            echo -ne "\033[31m"
+            ;;
         Yellow)
-            echo -ne "\033[33m" ;;
+            echo -ne "\033[33m"
+            ;;
         Blue)
-            echo -ne "\033[34m" ;;
+            echo -ne "\033[34m"
+            ;;
         Bright_Blue)
-            echo -ne "\033[94m" ;;
+            echo -ne "\033[94m"
+            ;;
         Gray)
-            echo -ne "\033[90m" ;;
+            echo -ne "\033[90m"
+            ;;
         Reset)
-            echo -ne "\033[0m" ;;
+            echo -ne "\033[0m"
+            ;;
         Nl)
-            echo -ne "\n" ;;
+            echo -ne "\n"
+            ;;
         \n)
-            echo -ne "\n" ;;
+            echo -ne "\n"
+            ;;
         *)
-            echo -n $arg ;;
+            echo -n $arg
+            ;;
         esac
     done
 }
@@ -85,13 +95,16 @@ prompt() {
     while true; do
         readc "Perform $1 -> Y/n " Yellow a
         case $a in
-            [yY])
-                $1
-                break ;;
-            [nN])
-                break ;;
-            *)
-                printc "Invalid Choice, Only Allowed Answers -> ( Y/n )" Red ;;
+        [yY])
+            $1
+            break
+            ;;
+        [nN])
+            break
+            ;;
+        *)
+            printc "Invalid Choice, Only Allowed Answers -> ( Y/n )" Red
+            ;;
         esac
     done
 }
@@ -100,64 +113,72 @@ color_tty() {
     for color in "$@"; do
         case $color in
         Green)
-            echo -ne "\033[32m" ;;
+            echo -ne "\033[32m"
+            ;;
         Red)
-            echo -ne "\033[31m" ;;
+            echo -ne "\033[31m"
+            ;;
         Yellow)
-            echo -ne "\033[33m" ;;
+            echo -ne "\033[33m"
+            ;;
         Blue)
-            echo -ne "\033[34m" ;;
+            echo -ne "\033[34m"
+            ;;
         Bright_Blue)
-            echo -ne "\033[94m" ;;
+            echo -ne "\033[94m"
+            ;;
         Gray)
-            echo -ne "\033[90m" ;;
+            echo -ne "\033[90m"
+            ;;
         Reset)
-            echo -ne "\033[0m" ;;
+            echo -ne "\033[0m"
+            ;;
         *)
-            echo -ne "\033[0m" ;;
+            echo -ne "\033[0m"
+            ;;
         esac
     done
 }
 
 Help() {
     color_tty Bright_Blue
-    echo -ne    "Usage: AMake [options] [modifiers]\n"
-    echo -ne    "Options:\n"
-    echo        "    --configure           ->      Configure Project Structure ( Creates Directories In Cwd ( Current Working Directory ))"
-    echo        "                                    src           ( Main Source Directory )                                                        ->  Contains All Source Files For Project"
-    echo        "                                    src/as        ( Assemble Source Directory )                                                    ->  Place All '(.s)'    Files In This Diretory For Automatic Assembly Into Object Files"
-    echo        "                                    src/c         ( C Source Directory )                                                           ->  Place All '(.c)'    Files In This Diretory For Automatic Compilation Into Object Files"
-    echo        "                                    src/cpp       ( CPP Source Directory )                                                         ->  Place All '(.cpp)'  Files In This Diretory For Automatic Compilation Into Object Files"
-    echo        "                                    build         ( Build Directory That Holds All Non Source Files )                              ->  Contains All Assembled And Compiled Files For Project"
-    echo        "                                    build/bin     ( Binary Directory )                                                             ->  Contains All Executable Files For Project"
-    echo        "                                    build/obj     ( Object Directory ( All Compiled Objects Are Made Into This Directory ))        ->  Contains All Object Files For Project"
-    echo        "                                    build/lib     ( Library Directory )                                                            ->  Contains All Compiled Library Files For Project"
-    echo        "                                    src/alang     ( Compiler Directory ( Experimental ))                                           ->  Contains All Compiler Files For Project Managers Compiler 'Alang' ( Not Yet Fully Implemented )"
-    echo        "                                    src/as/ide    ( Asm/Cpp IDE 'arm-asm-ide' Source Directory )                                   ->  Contains All Source Files For Asm/Cpp IDE 'arm-asm-ide'"
-    echo        "                                    build/obj/ide ( Asm/Cpp IDE 'arm-asm-ide' Object Directory )                                   ->  Contains All Object Files For Asm/Cpp IDE 'arm-asm-ide'"
-    echo        "                                  ]"
-    echo        "    --build               ->      Build Project"
-    echo        "    --install             ->      Install Project"
-    echo        "    --clean               ->      Clean Project"
-    echo        "    --help                ->      Display This Help Message"
+    echo -ne "Usage: AMake [options] [modifiers]\n"
+    echo -ne "Options:\n"
+    echo "    --configure           ->      Configure Project Structure ( Creates Directories In Cwd ( Current Working Directory ))"
+    echo "                                    src           ( Main Source Directory )                                                        ->  Contains All Source Files For Project"
+    echo "                                    src/as        ( Assemble Source Directory )                                                    ->  Place All '(.s)'    Files In This Diretory For Automatic Assembly Into Object Files"
+    echo "                                    src/c         ( C Source Directory )                                                           ->  Place All '(.c)'    Files In This Diretory For Automatic Compilation Into Object Files"
+    echo "                                    src/cpp       ( CPP Source Directory )                                                         ->  Place All '(.cpp)'  Files In This Diretory For Automatic Compilation Into Object Files"
+    echo "                                    build         ( Build Directory That Holds All Non Source Files )                              ->  Contains All Assembled And Compiled Files For Project"
+    echo "                                    build/bin     ( Binary Directory )                                                             ->  Contains All Executable Files For Project"
+    echo "                                    build/obj     ( Object Directory ( All Compiled Objects Are Made Into This Directory ))        ->  Contains All Object Files For Project"
+    echo "                                    build/lib     ( Library Directory )                                                            ->  Contains All Compiled Library Files For Project"
+    echo "                                    src/alang     ( Compiler Directory ( Experimental ))                                           ->  Contains All Compiler Files For Project Managers Compiler 'Alang' ( Not Yet Fully Implemented )"
+    echo "                                    src/as/ide    ( Asm/Cpp IDE 'arm-asm-ide' Source Directory )                                   ->  Contains All Source Files For Asm/Cpp IDE 'arm-asm-ide'"
+    echo "                                    build/obj/ide ( Asm/Cpp IDE 'arm-asm-ide' Object Directory )                                   ->  Contains All Object Files For Asm/Cpp IDE 'arm-asm-ide'"
+    echo "                                  ]"
+    echo "    --build               ->      Build Project"
+    echo "    --install             ->      Install Project"
+    echo "    --clean               ->      Clean Project"
+    echo "    --help                ->      Display This Help Message"
     echo
-    echo        "  Modifiers:"
-    echo        "    -y                    ->      Answer Yes To All Prompts Automatically"
+    echo "  Modifiers:"
+    echo "    -y                    ->      Answer Yes To All Prompts Automatically"
     echo
     color_tty Reset
 }
 
 check_file_size() {
-    size=$(stat -c%s "$1")  # Using stat to get file size in bytes
+    size=$(stat -c%s "$1") # Using stat to get file size in bytes
     printc "$1  ->  $size bytes" Gray
 }
 
 ## Check if a directory exists
- #  ( Arg1 = Directory Path ),
- #  ( Arg2 = Message If Directory Exists ),
- #  ( Arg3 = Color Of Message If Directory Exists ),
- #  ( Arg4 = Message If Directory Does Not Exist )
- #  ( Arg5 = Color Of Message If Directory Does Not Exist)
+#  ( Arg1 = Directory Path ),
+#  ( Arg2 = Message If Directory Exists ),
+#  ( Arg3 = Color Of Message If Directory Exists ),
+#  ( Arg4 = Message If Directory Does Not Exist )
+#  ( Arg5 = Color Of Message If Directory Does Not Exist)
 check_dir_exists() {
     if [ -d $1 ]; then
         printc "$2" $3
@@ -184,15 +205,15 @@ dirExists() {
 Configure() {
     printc 'Configuring Project Structure' Green
 
-    dirExists $SRC_DIR          # Check if 'src'                directory exists
-    dirExists $AS_SRC_DIR       # Check if 'src/as'             directory exists
-    dirExists $C_SRC_DIR        # Check if 'src/c'              directory exists
-    dirExists $CPP_SRC_DIR      # Check if 'src/cpp'            directory exists
-    dirExists $BUILD_DIR        # Check if 'build'              directory exists
-    dirExists $BIN_DIR          # Check if 'build/bin'          directory exists
-    dirExists $OBJ_DIR          # Check if 'build/obj'          directory exists
-    dirExists $LIB_DIR          # Check if 'build/lib'          directory exists
-    dirExists $INCLUDE_DIR      # Check if 'src/include'        directory exists
+    dirExists $SRC_DIR     # Check if 'src'                directory exists
+    dirExists $AS_SRC_DIR  # Check if 'src/as'             directory exists
+    dirExists $C_SRC_DIR   # Check if 'src/c'              directory exists
+    dirExists $CPP_SRC_DIR # Check if 'src/cpp'            directory exists
+    dirExists $BUILD_DIR   # Check if 'build'              directory exists
+    dirExists $BIN_DIR     # Check if 'build/bin'          directory exists
+    dirExists $OBJ_DIR     # Check if 'build/obj'          directory exists
+    dirExists $LIB_DIR     # Check if 'build/lib'          directory exists
+    dirExists $INCLUDE_DIR # Check if 'src/include'        directory exists
 
     printc "Run 'AMake <options> <-y>' '--help' For Help" Green
 }
@@ -200,8 +221,7 @@ Configure() {
 assembleFiles() {
     print_if_folder_not_empty $AS_SRC_DIR "Assembling As Files Into Obj Files" Green
 
-    for file in "$AS_SRC_DIR"/*".s"                                                                     # Loop through all the files in the src/as directory
-    {
+    for file in "$AS_SRC_DIR"/*".s"; do # Loop through all the files in the src/as directory
         base_file_name=$(basename $file .s)
         if [ -f "$file" ]; then
             printc "$AS_SRC_DIR/$base_file_name.s  ->  $OBJ_DIR/$base_file_name.o" Blue
@@ -210,28 +230,26 @@ assembleFiles() {
             check_file_size $AS_SRC_DIR/$base_file_name.s
             check_file_size $OBJ_DIR/$base_file_name.o
         fi
-    }
+    done
 }
 
 compileCFiles() {
     print_if_folder_not_empty $C_SRC_DIR "Compiling C Files Into Obj Files" Green
 
-    for file in "$C_SRC_DIR"/*".c"
-    {
+    for file in "$C_SRC_DIR"/*".c"; do
         base_file_name=$(basename $file .c)
         if [ -f "$file" ]; then
             print "$C_SRC_DIR/$base_file_name.c  ->  $OBJ_DIR/$base_file_name.o"
-            clang -c $file -o $OBJ_DIR/$base_file_name.o
+            clang -c -O2 $file -o $OBJ_DIR/$base_file_name.o
             check_file_size $C_SRC_DIR/$base_file_name.c
             check_file_size $OBJ_DIR/$base_file_name.o
         fi
-    }
+    done
 }
 
 compileCppFiles() {
     printc "Compiling CPP Files -> Obj Files" Green
-    for file in "$CPP_SRC_DIR"/*".cpp"
-    {
+    for file in "$CPP_SRC_DIR"/*".cpp"; do
         base_file_name=$(basename $file .cpp)
         if [ -f "$file" ]; then
             printc "$CPP_SRC_DIR/$base_file_name.cpp  ->  $OBJ_DIR/$base_file_name.o" Blue
@@ -239,13 +257,12 @@ compileCppFiles() {
             check_file_size $CPP_SRC_DIR/$base_file_name.cpp
             check_file_size $OBJ_DIR/$base_file_name.o
         fi
-    }
+    done
 }
 
 compileCppFilesStdC++() {
     printc "Compiling CPP Files -> Obj Files" Green
-    for file in "$CPP_SRC_DIR"/*".cpp"
-    {
+    for file in "$CPP_SRC_DIR"/*".cpp"; do
         base_file_name=$(basename $file .cpp)
         if [ -f "$file" ]; then
             printc "$CPP_SRC_DIR/$base_file_name.cpp  ->  $OBJ_DIR/$base_file_name.o" Blue
@@ -253,40 +270,54 @@ compileCppFilesStdC++() {
             check_file_size $CPP_SRC_DIR/$base_file_name.cpp
             check_file_size $OBJ_DIR/$base_file_name.o
         fi
-    }
+    done
 }
 
 make_lib_a() {
     libName=$(basename $BASE_DIR)
     printc "Creating static library -> $LIB_DIR/$libName.a" Green
-    for file in "$BUILD_DIR/obj/"*".o"
-    {
+    # for file in "$BUILD_DIR/obj/"*".o"; do
+    #     base_file_name=$(basename $file .o)
+    #     if [ -f "$file" ]; then
+    #         check_file_size $file
+    #         printc "$OBJ_DIR/$base_file_name.o -> $LIB_DIR/$libName.a" Blue
+    #         ar rcs "$BUILD_DIR/lib/$libName.a" $file
+    #     elif [ -d "$file" ]; then
+    #         for sub_file in "$file/"*".o"; do
+    #             if [ -f "$sub_file" ]; then
+    #                 check_file_size $sub_file
+    #                 printc "$sub_file -> $LIB_DIR/$libName.a" Blue
+    #                 ar rcs "$BUILD_DIR/lib/$libName.a" $sub_file
+    #             fi
+    #         done
+    #     fi
+    # done
+    find "$BUILD_DIR/obj/" -name "*.o" -type f | while read file; do
         base_file_name=$(basename $file .o)
         if [ -f "$file" ]; then
-            check_file_size $file
-            printc "$OBJ_DIR/$base_file_name.o -> $LIB_DIR/$libName.a" Blue
-            ar rcs "$BUILD_DIR/lib/$libName.a" $file
+            check_file_size "$file"
+            printc "$file -> $LIB_DIR/$libName.a" Blue
+            ar rcs "$BUILD_DIR/lib/$libName.a" "$file"
         fi
-    }
+    done
     check_file_size "$LIB_DIR/$libName.a"
 }
 
 make_arm_lib_a() {
     libName=$(basename $BASE_DIR)
     printc "Creating ARM static library -> $LIB_DIR/$libName.arm.a" Green
-    for file in "$BUILD_DIR/obj/"*".arm.o"
-    {
+    for file in "$BUILD_DIR/obj/"*".arm.o"; do
         base_file_name=$(basename $file .arm.o)
         if [ -f "$file" ]; then
             check_file_size $file
             printc "$OBJ_DIR/$base_file_name.o -> $LIB_DIR/$libName.arm.a" Blue
             ar rcs "$BUILD_DIR/lib/$libName.arm.a" $file
         fi
-    }
+    done
     check_file_size "$LIB_DIR/$libName.arm"
 }
 
-InstallLib () {
+InstallLib() {
     libName=$(basename $BASE_DIR)
     printc "Installing static library -> $LIB_DIR/$libName.a" Green
     check_file_size "$LIB_DIR/$libName.a"
@@ -308,6 +339,11 @@ InstallLib () {
         if [ -f "$file" ]; then
             printc "$file -> /usr/include/$libName" Blue
             sudo cp "$file" "/usr/include/$libName/"
+        elif [ -d "$file" ]; then
+            dir_name=$(basename "$file")
+            printc "Directory $file -> /usr/include/$libName" Blue
+            sudo mkdir -p "/usr/include/$libName/$dir_name"
+            sudo cp -r "$file/" "/usr/include/$libName/"
         fi
     done
 }
@@ -335,42 +371,41 @@ make_arm-asm-ide() {
 }
 
 # Editor
-    BuildEditor() {
-        printc "Building Editor" Green
-        for file in "$EDITOR_SRC_DIR"/*".cpp"; do
-            base_file_name=$(basename $file .cpp)
-            if [ -f "$file" ]; then
-                printc "$EDITOR_OBJ_DIR/$base_file_name.cpp -> $EDITOR_OBJ_DIR/$base_file_name.o" Blue
-                clang++ -std=c++17 -c $file -o $EDITOR_OBJ_DIR/$base_file_name.o
-            fi
-        done
-    }
-
-    InstallEditor() {
-        printc "Compiling Editor" Green
-        str=""
-        for file in "$EDITOR_OBJ_DIR"/*".o"; do
-            base_file_name=$(basename $file .o)
-            if [ -f "$file" ]; then
-                str="$str $EDITOR_OBJ_DIR/$base_file_name.o "
-            fi
-        done
-
-        if [[ -z $str ]]; then
-            printc "No Object Files Found For Editor" Red
-            return
+BuildEditor() {
+    printc "Building Editor" Green
+    for file in "$EDITOR_SRC_DIR"/*".cpp"; do
+        base_file_name=$(basename $file .cpp)
+        if [ -f "$file" ]; then
+            printc "$EDITOR_OBJ_DIR/$base_file_name.cpp -> $EDITOR_OBJ_DIR/$base_file_name.o" Blue
+            clang++ -std=c++17 -c $file -o $EDITOR_OBJ_DIR/$base_file_name.o
         fi
+    done
+}
 
+InstallEditor() {
+    printc "Compiling Editor" Green
+    str=""
+    for file in "$EDITOR_OBJ_DIR"/*".o"; do
+        base_file_name=$(basename $file .o)
+        if [ -f "$file" ]; then
+            str="$str $EDITOR_OBJ_DIR/$base_file_name.o "
+        fi
+    done
 
-        check_file_size $EDITOR_SRC_DIR/editor.cpp
-        check_file_size $EDITOR_OBJ_DIR/editor.o
-        printc "$EDITOR_OBJ_DIR/editor.o -> $BIN_DIR/editor" Blue
-        clang++ -std=c++17 $str $LIB_DIR/lib.a -o $BIN_DIR/editor -lncurses
-        check_file_size $BIN_DIR/editor
-        printc "Installing Editor" Green
-        printc "$BIN_DIR/editor -> /usr/bin/editor" Blue
-        sudo cp $BIN_DIR/editor /usr/bin/editor
-    }
+    if [[ -z $str ]]; then
+        printc "No Object Files Found For Editor" Red
+        return
+    fi
+
+    check_file_size $EDITOR_SRC_DIR/editor.cpp
+    check_file_size $EDITOR_OBJ_DIR/editor.o
+    printc "$EDITOR_OBJ_DIR/editor.o -> $BIN_DIR/editor" Blue
+    clang++ -std=c++17 $str $LIB_DIR/lib.a -o $BIN_DIR/editor -lncurses
+    check_file_size $BIN_DIR/editor
+    printc "Installing Editor" Green
+    printc "$BIN_DIR/editor -> /usr/bin/editor" Blue
+    sudo cp $BIN_DIR/editor /usr/bin/editor
+}
 #
 
 Install() {
@@ -378,8 +413,7 @@ Install() {
     printc "Installing -> $exeName" Green
 
     args=""
-    for file in "$OBJ_DIR"/*".o"
-    do
+    for file in "$OBJ_DIR"/*".o"; do
         base_file_name=$(basename $file .o)
         if [ -f "$file" ]; then
             check_file_size $file
@@ -405,15 +439,18 @@ Clean() {
             This Will Remove Build Dir( "$BUILD_DIR" )
             Proceed? -> (Y/n)" Yellow a
         case $a in
-            [yY])
-                rm -rf "$BUILD_DIR"
-                printc "Project Cleaned, Succesfully Removed Build Dir" Green
-                break ;;
-            [nN])
-                printc "Project Not Cleaned" Red
-                break ;;
-            *)
-                printc "Invalid Choice, Only Allowed Answers -> (Y/n)" Red ;;
+        [yY])
+            rm -rf "$BUILD_DIR"
+            printc "Project Cleaned, Succesfully Removed Build Dir" Green
+            break
+            ;;
+        [nN])
+            printc "Project Not Cleaned" Red
+            break
+            ;;
+        *)
+            printc "Invalid Choice, Only Allowed Answers -> (Y/n)" Red
+            ;;
         esac
     done
 }
@@ -429,7 +466,7 @@ check_flags() {
     for arg in $ARGS; do
         if [[ $arg == "-y" ]]; then
             PROMPT_FLAG=false
-            rm_element_from_args $arg                                       # Remove the first occurrence of "-y" from $ARGS
+            rm_element_from_args $arg # Remove the first occurrence of "-y" from $ARGS
             break
         fi
     done
@@ -448,24 +485,27 @@ promp_func() {
     fi
     case $@ in
     Configure)
-        rm_element_from_args "--configure" ;;
-    Build)
-        rm_element_from_args "--build" ;;
-    Install)
-        rm_element_from_args "--install" ;;
-    Clean)
-        rm_element_from_args "--clean" ;;
-    *)
+        rm_element_from_args "--configure"
         ;;
+    Build)
+        rm_element_from_args "--build"
+        ;;
+    Install)
+        rm_element_from_args "--install"
+        ;;
+    Clean)
+        rm_element_from_args "--clean"
+        ;;
+    *) ;;
     esac
 }
 
-InstallBin () {
+InstallBin() {
     printc "Installing $BIN_DIR/$PROJECT_NAME -> /usr/bin/$PROJECT_NAME" Green
     sudo cp $BIN_DIR/$PROJECT_NAME /usr/bin/$PROJECT_NAME
 }
 
-Run () {
+Run() {
     printc "Running Project" Green
     $BIN_DIR/$(basename $BASE_DIR)
 }
@@ -476,33 +516,45 @@ main() {
         case $arg in
         --editor)
             promp_func BuildEditor
-            promp_func InstallEditor ;;
+            promp_func InstallEditor
+            ;;
         --configure)
-            promp_func Configure ;;
+            promp_func Configure
+            ;;
         --buildStdC++)
-            promp_func compileCppFilesStdC++ ;;
+            promp_func compileCppFilesStdC++
+            ;;
         --build)
-            promp_func Build ;;
+            promp_func Build
+            ;;
         --install)
-            promp_func Install ;;
+            promp_func Install
+            ;;
         --lib)
-            promp_func make_lib_a ;;
+            promp_func make_lib_a
+            ;;
         --install-lib)
-            promp_func InstallLib ;;
+            promp_func InstallLib
+            ;;
         --clean)
-            promp_func Clean ;;
+            promp_func Clean
+            ;;
         --run)
-            promp_func Run ;;
+            promp_func Run
+            ;;
         --install-bin)
-	    promp_func InstallBin ;;
-	--help)
-            Help ;;
+            promp_func InstallBin
+            ;;
+        --help)
+            Help
+            ;;
         *)
-            printc ''"$arg"' -> Unknown Command -> Run "AMake --help" For Help' Red ;;
+            printc ''"$arg"' -> Unknown Command -> Run "AMake --help" For Help' Red
+            ;;
         esac
     done
 }
 
 # Main Script Starts Here
-ARGS=$@                                 # Save The Args Into A Variable ( This Needs to Be Done Globaly )
-main                                    # Run Main Function With The Args
+ARGS=$@ # Save The Args Into A Variable ( This Needs to Be Done Globaly )
+main    # Run Main Function With The Args
