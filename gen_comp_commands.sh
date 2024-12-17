@@ -19,7 +19,7 @@ declare -A FILE_COMMANDS
 # First, find all .cpp files and store their compile commands
 find "$DIR" -type f -name '*.cpp' | while read -r FILE; do
   DIRECTORY=$(dirname "$FILE")
-  COMMAND="/usr/bin/clang++ -I./src/include/ -DDEBUG -c \\\"$FILE\\\""
+  COMMAND="/usr/bin/clang++ -m64 -stdlib=libc++ -funroll-loops -O3 -std=c++23 -static -Werror -Wall -march=native -Rpass=loop-vectorize -flto -Wno-vla -mavx -I"$DIR"/src/include/ -c "$FILE""
   FILE_PATH="$FILE"
 
   FILE_COMMANDS["$FILE_PATH"]="$COMMAND"
@@ -27,7 +27,7 @@ find "$DIR" -type f -name '*.cpp' | while read -r FILE; do
   if [ "$FIRST_ENTRY" = true ]; then
     FIRST_ENTRY=false
   else
-    echo "," >> "$OUTPUT_FILE"
+    printf "," >> "$OUTPUT_FILE"
   fi
 
   cat <<EOT >> "$OUTPUT_FILE"
@@ -50,11 +50,11 @@ find "$DIR" -type f -name '*.h' | while read -r HEADER; do
     COMMAND="${FILE_COMMANDS["$CPP_FILE"]}"
   else
     # Use a generic compile command if no .cpp file is found
-    COMMAND="/usr/bin/clang++ -Iinclude -DDEBUG -c \\\"$HEADER\\\""
+    COMMAND="/usr/bin/clang++ -m64 -stdlib=libc++ -funroll-loops -O3 -std=c++23 -static -Werror -Wall -march=native -Rpass=loop-vectorize -flto -Wno-vla -mavx -I"$DIR"/src/include/ -c "$HEADER""
   fi
 
   # Ensure we add a comma before the new entry
-  echo "," >> "$OUTPUT_FILE"
+  printf "," >> "$OUTPUT_FILE"
 
   cat <<EOT >> "$OUTPUT_FILE"
   {
