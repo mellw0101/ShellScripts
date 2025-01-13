@@ -1,0 +1,20 @@
+#!/bin/bash
+
+# This script should be ran as root.
+if [[ $USER != "root" ]]; then
+	echo "This script should be ran as root."
+	exit 1
+fi
+
+if [[ ! -f /usr/bin/reflector ]]; then
+	if [[ -f /usr/bin/pacman ]]; then
+		pacman -S --needed reflector
+	else
+		echo "ERROR: Not using a pacman based distro, or pacman not installed."
+	fi
+fi
+
+if [[ -f /etc/pacman.d/mirrorlist ]]; then
+	cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.old
+fi
+reflector --verbose -c SE,FI,DE,NO,GE --connection-timeout 1 --download-timeout 1 -f 20 --save /etc/pacman.d/mirrorlist
