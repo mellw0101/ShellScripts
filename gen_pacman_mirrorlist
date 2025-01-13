@@ -11,6 +11,7 @@ if [[ ! -f /usr/bin/reflector ]]; then
 		pacman -S --needed reflector
 	else
 		echo "ERROR: Not using a pacman based distro, or pacman not installed."
+		exit 1
 	fi
 fi
 

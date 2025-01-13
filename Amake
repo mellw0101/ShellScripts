@@ -1,6 +1,6 @@
 #!/bin/bash
 # Defines the project base vars
-BASE_DIR=$(pwd) # Get the current working directory and store it in BASE_DIR (base directory of the project)
+BASE_DIR=$(pwd)	# Get the current working directory and store it in BASE_DIR (base directory of the project)
 PROJECT_NAME=$(basename $BASE_DIR)
 SRC_DIR=$BASE_DIR/src             # Source directory of the project (src directory stores all source files and are the only files to be modified the rest is automated)
 C_SRC_DIR=$BASE_DIR/src/c         # C source directory of the project (c directory stores all the C source files)
