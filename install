@@ -1,60 +1,117 @@
 #!/bin/bash
 
 printc() {
-    echo -ne "install - [ "
-    color_tty $2
-    echo -ne "$1"
-    color_tty Reset
-    echo -ne " ]\n"
+  echo -ne "install - [ "
+  color_tty $2
+  echo -ne "$1"
+  color_tty Reset
+  echo -ne " ]\n"
 }
 
 color_tty() {
-    for color in "$@"; do
-        case $color in
-        Green)
-            echo -ne "\033[32m" ;;
-        Red)
-            echo -ne "\033[31m" ;;
-        Yellow)
-            echo -ne "\033[33m" ;;
-        Blue)
-            echo -ne "\033[34m" ;;
-        Bright_Blue)
-            echo -ne "\033[94m" ;;
-        Gray)
-            echo -ne "\033[90m" ;;
-        Reset)
-            echo -ne "\033[0m" ;;
-        *)
-            echo -ne "\033[0m" ;;
-        esac
-    done
+  for color in "$@"; do
+    case $color in
+    Green)
+      echo -ne "\033[32m" ;;
+    Red)
+      echo -ne "\033[31m" ;;
+    Yellow)
+      echo -ne "\033[33m" ;;
+    Blue)
+      echo -ne "\033[34m" ;;
+    Bright_Blue)
+      echo -ne "\033[94m" ;;
+    Gray)
+      echo -ne "\033[90m" ;;
+    Reset)
+      echo -ne "\033[0m" ;;
+    *)
+      echo -ne "\033[0m" ;;
+    esac
+  done
 }
 
 Help() {
-    printc 'Usage: install [options] [command] [arguments]' Green
-    printc 'Options:' Green
-    printc '--help      Display this help message' Green
-    printc '--install   InstallShellScripts' Green
+	printf "ShellScipts install script\n\n"
+	printf "Usage: $0 [options] [...args]\n"
+  printf "Options:\n"
+	printf "  --help                  Show this text\n"
+	printf "  --install               Install all script's\n"
+	printf "  --install [...args]     Install only the chosen script's based on passed args\n"
+}
+
+# Install a file to `/usr/bin/$1`.
+install_file() {
+	local file=$1
+	if [[ ! -f $file ]]; then
+		printc "File "$file" does not exist." Red
+		exit 1
+	fi
+	printc "$file -> /usr/bin/$file" Blue
+	cp "$file" /usr/bin/"$file"
+	chmod u+x /usr/bin/"$file"
 }
 
 Install() {
-    printc 'Installing Shell Scripts' Green
-    printc 'Copying Amake -> /usr/bin/Amake'
-    sudo cp Amake /usr/bin/Amake
-    sudo chmod u+x /usr/bin/Amake
-    sudo chown $USER:wheel /usr/bin/Amake
-    printc 'Shell Scripts Installed' Green
+	# Only allow global installation when running as root.
+	if [[ $USER != "root" ]]; then
+		printf "For global installation, run as root\n"
+		exit 1
+	fi
+	printc 'Installing Shell Scripts' Green
+	install_file Amake
+	install_file gen_comp_commands.sh
+	install_file gen_pacman_mirrorlist	
+	printc 'Shell Scripts Installed' Green
 }
 
-ARGS=$@
-for arg in $ARGS; do
-    case $arg in
-    --install)
-        Install ;;
-    --help)
-        Help ;;
-    *)
-        Help ;;
-    esac
-done
+if [[ $# -eq 0 ]]; then
+	Help
+else
+	# Some args.
+	ARGS=$@
+	DO_HELP="0"
+	DO_INSTALL="0"
+	INVALID="0"
+	# First check what the user wants to do.
+	for arg in $ARGS; do
+	  case $arg in
+	  --install)
+	  	DO_INSTALL="1"
+	  	# If there is input before the --install arg, show the help and exit.
+	  	if [[ $INVALID == "1" ]]; then
+	  		Help
+	  		exit 1
+	  	fi
+	  	;;
+	  --help)
+	    DO_HELP="1"
+	    ;;
+	  *)
+	    INVALID="1"
+	    ;;
+	  esac
+	done
+	# Now perform the selected options.
+	if [[ $DO_HELP == "1" || ($INVALID == "1" && $DO_INSTALL == "0") ]]; then
+		Help
+		exit 0
+	fi
+	if [[ $DO_INSTALL == "1" ]]; then
+		if [[ $# -eq 1 ]]; then
+			Install
+		else
+			printc "Manualy installing scripts based on args" Green
+			for arg in $ARGS; do
+				case $arg in
+					--install)
+						;;
+					*)
+						install_file $arg
+						;;
+				esac
+			done
+			printc "Successfully installed all shell scripts." Green 
+		fi
+	fi
+fi
