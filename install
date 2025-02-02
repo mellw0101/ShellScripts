@@ -61,7 +61,8 @@ Install() {
 	printc 'Installing Shell Scripts' Green
 	install_file Amake
 	install_file gen_comp_commands.sh
-	install_file gen_pacman_mirrorlist	
+	install_file gen_pacman_mirrorlist
+	install_file gitcommit
 	printc 'Shell Scripts Installed' Green
 }
 

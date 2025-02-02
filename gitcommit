@@ -1,0 +1,49 @@
+#!/bin/bash
+
+BINARY_NAME="$0"
+ROOT_DIR_NAME=$(basename $PWD)
+
+# Date and time (YYYY-MM-DD HH:MM:SS)
+datetime=$(date '+%Y-%m-%d %H:%M:%S')
+
+get_commit_stats() {
+    # Get number of files changed
+    files_changed=$(git diff --staged --name-only | wc -l)
+    
+    # Get numbers of lines added/removed
+    read -r lines_added lines_removed <<< $(git diff --staged --numstat | awk '{add+=$1; del+=$2} END{print add, del}')
+    
+    # Handle empty/null values
+    lines_added=${lines_added:-0}
+    lines_removed=${lines_removed:-0}
+    
+    echo "$files_changed files changed, $lines_added insertions(+), $lines_removed deletions(-)"
+}
+
+usage() {
+	printf "Usage: %s <message>\n" $BINARY_NAME
+}
+
+if [ ! -d "$PWD"/.git ]; then
+	printf "This script should be ran inside the root folder of a git project.\n"
+fi
+
+if [ ! $# -eq 1 ]; then
+	usage
+else
+	COMMIT_MSG="$1"
+fi
+
+if [ "$COMMIT_MSG" == "" ]; then
+	echo "Cannot commit with empty message"
+	exit 1
+fi
+
+if [ ! -d "$PWD"/doc ]; then
+	mkdir doc
+fi
+
+git add .
+git commit -m "$COMMIT_MSG"
+echo "[$datetime]: $COMMIT_MSG"
+
