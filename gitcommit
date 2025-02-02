@@ -46,6 +46,6 @@ fi
 
 git add .
 git commit -m "$COMMIT_MSG"
-get_commit_stats
-echo "[$datetime]: $COMMIT_MSG"
+echo "[$datetime]: $COMMIT_MSG" >> "$PWD"/doc/commit_history
 
+git push
