@@ -73,9 +73,9 @@ find "$DIR" -type f -name '*.c' | while read -r FILE; do
   FILE_NAME=$(basename "$FILE")
   FILE_NAME_NO_EXT="${FILE_NAME%.*}"
   OUTPUT_PATH="$DIR"/build/obj/"$FILE_NAME_NO_EXT".o
-  COMMAND="/usr/bin/cc -O2 -g -flto=auto -fno-fat-lto-objects -Wall -Wextra -pedantic -Wno-unused-parameter -Wstrict-prototypes\
+  COMMAND="/usr/bin/cc -O2 -g -flto=auto -fno-fat-lto-objects -Wall -Wextra -pedantic -Wunused-parameter -Wstrict-prototypes\
  -Wshadow -Wconversion -Wvla -Wdouble-promotion -Wmissing-noreturn -Wmissing-format-attribute\
- -Wmissing-prototypes -fsigned-char -fstack-protector-strong -Wno-conversion -fno-common -Wno-unused-result\
+ -Wmissing-prototypes -fsigned-char -fstack-protector-strong -Wno-conversion -fno-common -Wunused-result\
  -Wimplicit-fallthrough -fdiagnostics-color=always -march=native -Rpass=loop-vectorize -mavx -Wno-vla -std=gnu99\
  -I"$DIR"/src/include/ \
  -o "$OUTPUT_PATH" \
@@ -98,32 +98,5 @@ find "$DIR" -type f -name '*.c' | while read -r FILE; do
   }
 EOT
 done
-
-
-# # Now, find all .h files and associate them with a compile command
-# find "$DIR" -type f -name '*.h' | while read -r HEADER; do
-#   DIRECTORY=$(dirname "$HEADER")
-#   FILE_PATH="$HEADER"
-
-#   # Try to find a .cpp file in the same directory
-#   CPP_FILE=$(find "$DIRECTORY" -maxdepth 1 -type f -name '*.cpp' | head -n 1)
-#   if [ -n "$CPP_FILE" ]; then
-#     COMMAND="${FILE_COMMANDS["$CPP_FILE"]}"
-#   else
-#     # Use a generic compile command if no .cpp file is found
-#     COMMAND="/usr/bin/clang++ -m64 -stdlib=libc++ -funroll-loops -O3 -std=c++23 -static -Werror -Wall -march=native -Rpass=loop-vectorize -flto -Wno-vla -mavx -I"$DIR"/src/include/ -c "$HEADER""
-#   fi
-
-#   # Ensure we add a comma before the new entry
-#   printf "," >> "$OUTPUT_FILE"
-
-#   cat <<EOT >> "$OUTPUT_FILE"
-#   {
-#     "directory": "$DIR",
-#     "command": "$COMMAND",
-#     "file": "$FILE_PATH"
-#   }
-# EOT
-# done
 
 echo "]" >> "$OUTPUT_FILE"

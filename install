@@ -59,10 +59,12 @@ Install() {
 		exit 1
 	fi
 	printc 'Installing Shell Scripts' Green
+	# Install the scripts globaly.
 	install_file Amake
 	install_file gen_comp_commands.sh
 	install_file gen_pacman_mirrorlist
 	install_file gitcommit
+	install_file comp_glibc_static.sh
 	printc 'Shell Scripts Installed' Green
 }
 

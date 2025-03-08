@@ -7,17 +7,17 @@ ROOT_DIR_NAME=$(basename $PWD)
 datetime=$(date '+%Y-%m-%d %H:%M:%S')
 
 get_commit_stats() {
-    # Get number of files changed
-    files_changed=$(git diff --staged --name-only | wc -l)
-    
-    # Get numbers of lines added/removed
-    read -r lines_added lines_removed <<< $(git diff --staged --numstat | awk '{add+=$1; del+=$2} END{print add, del}')
-    
-    # Handle empty/null values
-    lines_added=${lines_added:-0}
-    lines_removed=${lines_removed:-0}
-    
-    echo "$files_changed files changed, $lines_added insertions(+), $lines_removed deletions(-)"
+  # Get number of files changed
+  files_changed=$(git diff --staged --name-only | wc -l)
+  
+  # Get numbers of lines added/removed
+  read -r lines_added lines_removed <<< $(git diff --staged --numstat | awk '{add+=$1; del+=$2} END{print add, del}')
+  
+  # Handle empty/null values
+  lines_added=${lines_added:-0}
+  lines_removed=${lines_removed:-0}
+  
+  echo "$files_changed files changed, $lines_added insertions(+), $lines_removed deletions(-)"
 }
 
 usage() {
@@ -28,10 +28,13 @@ if [ ! -d "$PWD"/.git ]; then
 	printf "This script should be ran inside the root folder of a git project.\n"
 fi
 
-if [ ! $# -eq 1 ]; then
-	usage
-else
+# We either only accept one argument or none, and when there is no argument make the msg 'No msg'.
+if [ $# -eq 1 ]; then
 	COMMIT_MSG="$1"
+elif [ $# -eq 0 ]; then
+  COMMIT_MSG="No msg"
+else
+  usage
 fi
 
 if [ "$COMMIT_MSG" == "" ]; then
@@ -43,9 +46,10 @@ if [ ! -d "$PWD"/doc ]; then
 	mkdir doc
 fi
 
-
-git add .
-git commit -m "$COMMIT_MSG"
+# Add this commit to 'doc/commit_history' before commiting, so that we have a fully updated project after the commit.
 echo "[$datetime]: $COMMIT_MSG" >> "$PWD"/doc/commit_history
 
+# Perform the commit sequence.
+git add .
+git commit -m "$COMMIT_MSG"
 git push
