@@ -36,13 +36,13 @@ FIRST_ENTRY=true
 declare -A FILE_COMMANDS
 
 # First, find all .cpp files and store their compile commands
-find "$DIR" -type f -name '*.cpp' | while read -r FILE; do
+for FILE in $(find "$DIR" -type f -name '*.cpp'); do
   DIRECTORY=$(dirname "$FILE")
   FILE_NAME=$(basename "$FILE")
   FILE_NAME_NO_EXT="${FILE_NAME%.*}"
   OUTPUT_PATH="$DIR"/build/obj/"$FILE_NAME_NO_EXT".o
   COMMAND="/usr/bin/cc -O2 -g -flto=auto -fno-fat-lto-objects -Wall -Wextra -pedantic -Wno-unused-parameter -Wstrict-prototypes\
- -Wshadow -Wconversion -Wvla -Wdouble-promotion -Wmissing-noreturn -Wmissing-format-attribute \
+ -Wshadow -Wconversion -Wvla -Wdouble-promotion -Wmissing-noreturn -Wmissing-format-attribute\
  -Wmissing-prototypes -fsigned-char -fstack-protector-strong -Wno-conversion -fno-common -Wno-unused-result\
  -Wimplicit-fallthrough -fdiagnostics-color=always -march=native -Rpass=loop-vectorize -mavx -Wno-vla\
  -I"$DIR"/src/include/ \
@@ -67,8 +67,8 @@ find "$DIR" -type f -name '*.cpp' | while read -r FILE; do
 EOT
 done
 
-# First, find all .cpp files and store their compile commands
-find "$DIR" -type f -name '*.c' | while read -r FILE; do
+# Then, find all .c files and input each one into the compile commands file.
+for FILE in $(find "$DIR" -type f -name '*.c'); do
   DIRECTORY=$(dirname "$FILE")
   FILE_NAME=$(basename "$FILE")
   FILE_NAME_NO_EXT="${FILE_NAME%.*}"
