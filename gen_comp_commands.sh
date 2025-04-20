@@ -73,7 +73,7 @@ for FILE in $(find "$DIR" -type f -name '*.c'); do
   FILE_NAME=$(basename "$FILE")
   FILE_NAME_NO_EXT="${FILE_NAME%.*}"
   OUTPUT_PATH="$DIR"/build/obj/"$FILE_NAME_NO_EXT".o
-  COMMAND="/usr/bin/cc -O2 -g -flto=auto -fno-fat-lto-objects -Wall -Wextra -pedantic -Wunused-parameter -Wstrict-prototypes\
+  COMMAND="/usr/bin/cc -O2 -g -flto=auto -fno-fat-lto-objects -Wall -Wextra -pedantic -Wunused-parameter -Wstrict-prototypes -Woverflow\
  -Wshadow -Wconversion -Wvla -Wdouble-promotion -Wmissing-noreturn -Wmissing-format-attribute\
  -Wmissing-prototypes -fsigned-char -fstack-protector-strong -Wno-conversion -fno-common -Wunused-result\
  -Wimplicit-fallthrough -fdiagnostics-color=always -march=native -Rpass=loop-vectorize -mavx -Wno-vla -std=gnu99\
