@@ -1,0 +1,22 @@
+#!/bin/bash
+
+if [ "$USER" != "root" ]; then
+  echo "This script must be ran as root."
+  exit 1
+fi
+
+clear
+
+while true; do
+  cat /sys/class/drm/card1/device/pp_power_profile_mode
+  read -p 'Select power mode: ' MODE
+  case $MODE in
+    0|1|2|3|4|5|6)
+      break;;
+    *)
+      ;;
+  esac
+done
+
+echo "manual" > /sys/class/drm/card1/device/power_dpm_force_performance_level
+echo "$MODE" > /sys/class/drm/card1/device/pp_power_profile_mode

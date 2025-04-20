@@ -5,4 +5,4 @@ if [ "$USER" != "root" ]; then
   exit 1
 fi
 
-watch -n 0.5 cat /sys/kernel/debug/dri/1/amdgpu_pm_info
+watch -n 0.2 cat /sys/kernel/debug/dri/1/amdgpu_pm_info

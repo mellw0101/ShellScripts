@@ -65,6 +65,9 @@ Install() {
 	install_file gen_pacman_mirrorlist
 	install_file gitcommit
 	install_file comp_glibc_static.sh
+  install_file amdgpumon
+  install_file amdgpu_setpp
+	install_file amdgpu_pp_service.sh
 	printc 'Shell Scripts Installed' Green
 }
 
