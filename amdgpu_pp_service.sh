@@ -19,8 +19,8 @@ check_status() {
 sleep 1
 
 log "Enabling manual mode."
-echo "manual" > /sys/class/drm/card1/device/power_dpm_force_performance_level
-  && log "Successfully enabled manual mode."
+echo "manual" > /sys/class/drm/card1/device/power_dpm_force_performance_level \
+  && log "Successfully enabled manual mode." \
   || log "Failed to enable manual mode."
 
 log "Enabling the fan, and setting 8-bit pwm value of fan."
