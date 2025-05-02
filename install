@@ -68,6 +68,7 @@ Install() {
   install_file amdgpumon
   install_file amdgpu_setpp
 	install_file amdgpu_pp_service.sh
+	install_file set_dell_server_fans.sh
 	printc 'Shell Scripts Installed' Green
 }
 
