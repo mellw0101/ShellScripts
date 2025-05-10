@@ -18,4 +18,5 @@ fi
 if [[ -f /etc/pacman.d/mirrorlist ]]; then
 	cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.old
 fi
-reflector --verbose -c SE,FI,DE,NO,GE --connection-timeout 1 --download-timeout 1 -f 20 --save /etc/pacman.d/mirrorlist
+# reflector --verbose -c SE,FI,DE,NO,GE --connection-timeout 1 --download-timeout 1 -f 20 --save /etc/pacman.d/mirrorlist
+reflector --verbose -c SE,FI,DE,NO,GE --connection-timeout 1 --download-timeout 1 -f 8 --protocol https -a 1 --delay 0.25 --save /etc/pacman.d/mirrorlist

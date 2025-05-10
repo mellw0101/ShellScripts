@@ -1,0 +1,14 @@
+#!/bin/bash
+
+if [ ! -f "/usr/bin/ipmitool" ]; then
+  if [ -f "/usr/bin/pacman" ]; then
+    sudo pacman -S --needed impitool
+  elif [ -f "/usr/bin/apt" ]; then
+    sudo apt install impitool
+  else
+    echo "Cannot install impitool.  Please install to use this script."
+    exit 1
+  fi
+fi
+
+ipmitool -I lanplus -H 192.168.0.33 -U root "$@"
