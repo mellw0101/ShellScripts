@@ -1,7 +1,0 @@
-[Desktop Entry]
-Type=Service
-X-KDE-ServiceTypes=KWin/Script
-Name=Pin Top Monitor Windows
-Comment=Automatically pins new windows on the top monitor to all desktops
-Icon=window-pin
-X-KWin-Script-EnabledOnStartup=true
